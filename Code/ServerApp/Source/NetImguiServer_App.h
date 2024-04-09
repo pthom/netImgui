@@ -6,9 +6,30 @@
 //=============================================================================================
 // SELECT RENDERING/OS API HERE
 //=============================================================================================
-#define HAL_API_PLATFORM_WIN32_DX11		1
-#define HAL_API_PLATFORM_GLFW_GL3		0														// Currently only compiles in release (library include compatibility)
-#define HAL_API_PLATFORM_SOKOL			0
+// 1. Either edit the lines below to select the desired backend
+#if !defined(NETIMGUI_SERVER_APP_BACKEND_SOKOL) && !defined(NETIMGUI_SERVER_APP_BACKEND_GLFW_GL3) && !defined(NETIMGUI_SERVER_APP_BACKEND_WIN32_DX11)
+    #define HAL_API_PLATFORM_WIN32_DX11		1
+    #define HAL_API_PLATFORM_GLFW_GL3		0														// Currently only compiles in release (library include compatibility)
+    #define HAL_API_PLATFORM_SOKOL			0
+#endif
+
+// 2. Or select the backend from the build command line (e.g. -DNETIMGUI_SERVER_APP_BACKEND_SOKOL)
+#ifdef NETIMGUI_SERVER_APP_BACKEND_WIN32_DX11
+    #define HAL_API_PLATFORM_WIN32_DX11	1
+    #define HAL_API_PLATFORM_SOKOL		0
+    #define HAL_API_PLATFORM_GLFW_GL3	0
+#endif
+#ifdef NETIMGUI_SERVER_APP_BACKEND_GLFW_GL3
+    #define HAL_API_PLATFORM_WIN32_DX11	0
+    #define HAL_API_PLATFORM_SOKOL		0
+    #define HAL_API_PLATFORM_GLFW_GL3	1
+#endif
+#ifdef NETIMGUI_SERVER_APP_BACKEND_SOKOL
+    #define HAL_API_PLATFORM_WIN32_DX11	0
+    #define HAL_API_PLATFORM_SOKOL		1
+    #define HAL_API_PLATFORM_GLFW_GL3	0
+#endif
+
 #define HAL_API_RENDERTARGET_INVERT_Y	(HAL_API_PLATFORM_GLFW_GL3 || HAL_API_PLATFORM_SOKOL)	// Invert client render target Y axis (since OpenGL start texture UV from BottomLeft instead of DirectX TopLeft)
 //=============================================================================================
 
