@@ -10,7 +10,11 @@
 
 #include "NetImguiServer_RemoteClient.h"
 #include <imgui_impl_opengl3.h>
+#ifdef HELLOIMGUI_HAS_OPENGL
+#include "hello_imgui/hello_imgui_include_opengl.h"
+#else
 #include <imgui_impl_opengl3_loader.h>
+#endif
 
 namespace NetImguiServer { namespace App
 {
