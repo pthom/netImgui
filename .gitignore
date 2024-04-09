@@ -264,3 +264,7 @@ Web/raw/InputWithNetImgui.xcf
 Web/raw/HowItWorks.svg
 Web/raw/AppWithoutNetImgui.xcf
 Web/raw/AppWithNetImgui.xcf
+
+# CLion
+.idea/
+cmake-build*
