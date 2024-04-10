@@ -55,12 +55,12 @@ struct Client
 	NetImgui::Internal::CmdClipboard*		TakePendingClipboard();
 	void									ProcessPendingTextures();
 
-	void*									mpHAL_AreaRT			= nullptr;
-	void*									mpHAL_AreaTexture		= nullptr;
-	uint16_t								mAreaRTSizeX			= 0;		//!< Currently allocated RenderTarget size
-	uint16_t								mAreaRTSizeY			= 0;		//!< Currently allocated RenderTarget size
-	uint16_t								mAreaSizeX				= 0;		//!< Available area size available to remote client
-	uint16_t								mAreaSizeY				= 0;		//!< Available area size available to remote client
+	void*									mpHAL_AreaRT			= nullptr;  //!< FrameBuffer
+	void*									mpHAL_AreaTexture		= nullptr;  //!< Texture
+	uint16_t								mAreaRTSizeX			= 0;		//!< Currently allocated RenderTarget size (might be bigger than mtAreaSizeX by a factor of mDisplayFramebufferScale.x)
+	uint16_t								mAreaRTSizeY			= 0;		//!< Currently allocated RenderTarget size (might be bigger than mtAreaSizeY by a factor of mDisplayFramebufferScale.y)
+	uint16_t								mAreaSizeX				= 0;		//!< Area size available to remote client
+	uint16_t								mAreaSizeY				= 0;		//!< Area size available to remote client
 	char									mInfoName[128]			= {};
 	char									mWindowID[128+16]		= {};
 	char									mInfoImguiVerName[16]	= {};

@@ -251,7 +251,7 @@ NetImguiImDrawData*	Client::GetImguiDrawData(void* pEmtpyTextureHAL)
 				pCmdList->CmdBuffer[drawIdx].TextureId	= NetImgui::Internal::TextureCastFromPtr( texHALPtr );
 			}
 		}
-	}	
+	}
 	return mpImguiDrawData;
 }
 
@@ -274,11 +274,14 @@ NetImguiImDrawData* Client::ConvertToImguiDrawData(const NetImgui::Internal::Cmd
 	pDrawData->Valid				= true;
     pDrawData->TotalVtxCount		= static_cast<int>(pCmdDrawFrame->mTotalVerticeCount);
 	pDrawData->TotalIdxCount		= static_cast<int>(pCmdDrawFrame->mTotalIndiceCount);
+
     pDrawData->DisplayPos.x			= pCmdDrawFrame->mDisplayArea[0];
 	pDrawData->DisplayPos.y			= pCmdDrawFrame->mDisplayArea[1];
     pDrawData->DisplaySize.x		= pCmdDrawFrame->mDisplayArea[2] - pCmdDrawFrame->mDisplayArea[0];
 	pDrawData->DisplaySize.y		= pCmdDrawFrame->mDisplayArea[3] - pCmdDrawFrame->mDisplayArea[1];
-    pDrawData->FramebufferScale		= ImVec2(1,1); //! @sammyfreg Currently untested, so force set to 1
+	// GetDisplayFramebufferScale() will return (1, 1) if SetUseServerDPISettings() was not called
+	// otherwise, it will return the server's value for ImGui::GetIO().DisplayFramebufferScale
+    pDrawData->FramebufferScale 	= NetImguiServer::UI::Internal_GetDisplayFramebufferScale();
     pDrawData->OwnerViewport		= nullptr;
 
 	ImDrawList* pCmdList			= pDrawData->CmdLists[0];
@@ -420,7 +423,11 @@ void Client::CaptureImguiInput()
 	pNewInput->mMouseWheelHoriz		= mMouseWheelPos[1];
 	pNewInput->mCompressionUse		= NetImguiServer::Config::Server::sCompressionEnable;
 	pNewInput->mCompressionSkip		= mbCompressionSkipOncePending;
-	pNewInput->mFontDPIScaling		= config.mDPIScaleEnabled ? NetImguiServer::UI::GetFontDPIScale() : 1.f;
+
+    pNewInput->mFontDPIScaling		= config.mDPIScaleEnabled ? NetImguiServer::UI::Internal_GetFontDPIScale() : 1.f;
+	pNewInput->mFontSizeLoadingRatio	= NetImguiServer::UI::Internal_GetFontSizeLoadingRatio();
+    // printf("CaptureImguiInput: Sending fontDpiScale=%f fontLoadingRatio=%f\n", pNewInput->mFontDPIScaling, pNewInput->mFontSizeLoadingRatio);
+
 	mbCompressionSkipOncePending	= false;
 
 	if( ImGui::IsWindowFocused() )
