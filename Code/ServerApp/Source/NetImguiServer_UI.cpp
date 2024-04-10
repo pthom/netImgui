@@ -34,6 +34,7 @@ static uint32_t							gPopup_ConfirmDelete_ConfigIdx		= NetImguiServer::Config::
 static bool								gPopup_AboutNetImgui_Show			= false;
 static bool								gPopup_ServerConfig_Show			= false;
 static NetImguiServer::Config::Client*	gPopup_ClientConfig_pConfig			= nullptr;
+float 									gFontLoadingRatio = -1.f; // will be > 0 when UseServerDPISettings() was called instead of SetWindowDPI()
 
 //=================================================================================================
 // Convert a memory size to a displayable value
@@ -711,7 +712,7 @@ void DrawImguiContent_MainMenu_Clients_Entry(RemoteClient::Client* pClient, NetI
 	ImGui::EndDisabled();	
 
 	// Config: Connection
-	if( pClient && !pClient->mbDisconnectPending && ImGui::Button("Disconnect", ImVec2(80 * GetFontDPIScale(),0 )) )
+	if( pClient && !pClient->mbDisconnectPending && ImGui::Button("Disconnect", ImVec2(80 * Internal_GetFontDPIScale(), 0 )) )
 	{
 		gPopup_ConfirmDisconnect_ClientIdx = pClient->mClientIndex;
 	}
@@ -720,7 +721,7 @@ void DrawImguiContent_MainMenu_Clients_Entry(RemoteClient::Client* pClient, NetI
 		if( pClientConfig->IsTransient() ){
 			ImGui::TextUnformatted("(Request)");
 		}
-		else if (!pClientConfig->mConnected && !pClientConfig->mConnectRequest && ImGui::Button("Connect", ImVec2(80 * GetFontDPIScale(),0 )) ){
+		else if (!pClientConfig->mConnected && !pClientConfig->mConnectRequest && ImGui::Button("Connect", ImVec2(80 * Internal_GetFontDPIScale(), 0 )) ){
 			NetImguiServer::Config::Client::SetProperty_ConnectRequest(pClientConfig->mRuntimeID, true);
 		}
 	}
@@ -952,14 +953,57 @@ void SetWindowDPI(uint32_t dpi)
 	gWindowDPI = dpi;
 }
 
+bool WasUseServerDPISettingsCalled()
+{
+	return gFontLoadingRatio > 0;
+}
+
 //=================================================================================================
 // Get the font scaling factor applied to handle small text on screen with high resolution
 //=================================================================================================
-float GetFontDPIScale()
+float Internal_GetFontDPIScale()
 {
-	float scale = ((float)gWindowDPI / (float)kWindowDPIDefault);
-	scale		= scale > 1.f ? scale : 1.f;
-	return 1.f + (scale - 1.f) * NetImguiServer::Config::Server::sDPIScaleRatio;
+    if (WasUseServerDPISettingsCalled())
+    {
+        return ImGui::GetIO().FontGlobalScale;
+    }
+    else
+    {
+        float scale = ((float)gWindowDPI / (float)kWindowDPIDefault);
+        scale		= scale > 1.f ? scale : 1.f;
+        return 1.f + (scale - 1.f) * NetImguiServer::Config::Server::sDPIScaleRatio;
+    }
 }
+
+float Internal_GetFontSizeLoadingRatio()
+{
+	if (WasUseServerDPISettingsCalled())
+	{
+		return gFontLoadingRatio;
+	}
+	else
+	{
+		return 1.f;
+	}
+}
+
+
+void SetUseServerDPISettings(float fontSizeLoadingRatio)
+{
+	gFontLoadingRatio = fontSizeLoadingRatio;
+}
+
+ImVec2 Internal_GetDisplayFramebufferScale()
+{
+    if (WasUseServerDPISettingsCalled())
+    {
+        return ImGui::GetIO().DisplayFramebufferScale;
+    }
+    else
+    {
+        return ImVec2(1.f, 1.f);
+    }
+}
+
 
 }} // namespace NetImguiServer { namespace UI

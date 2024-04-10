@@ -152,13 +152,20 @@ void UpdateRemoteContent()
 			else if( client.mbIsVisible ){
 				client.ProcessPendingTextures();
 
-				// Update the RenderTarget destination of each client, of size was updated
-				if (client.mAreaSizeX > 0 && client.mAreaSizeY > 0 && (!client.mpHAL_AreaRT || client.mAreaRTSizeX != client.mAreaSizeX || client.mAreaRTSizeY != client.mAreaSizeY))
+				// Update the RenderTarget destination of each client, if its size was updated
+				auto serverDisplayFramebufferScale = NetImguiServer::UI::Internal_GetDisplayFramebufferScale();
+                uint16_t scaledAreaRTSizeX = static_cast<uint16_t>(static_cast<float>(client.mAreaSizeX) * serverDisplayFramebufferScale.x);
+                uint16_t scaledAreaRTSizeY = static_cast<uint16_t>(static_cast<float>(client.mAreaSizeY) * serverDisplayFramebufferScale.y);
+                bool isSizeNotNull = client.mAreaSizeX > 0 && client.mAreaSizeY;
+                bool isSizeChanged = client.mAreaRTSizeX != scaledAreaRTSizeX || client.mAreaRTSizeY != scaledAreaRTSizeY;
+                bool isAreaRtNull = client.mpHAL_AreaRT == nullptr;
+                bool shallUpdateRenderTarget = isSizeNotNull && (isAreaRtNull || isSizeChanged);
+				if (shallUpdateRenderTarget)
 				{
-					if (HAL_CreateRenderTarget(client.mAreaSizeX, client.mAreaSizeY, client.mpHAL_AreaRT, client.mpHAL_AreaTexture))
+					if (HAL_CreateRenderTarget(scaledAreaRTSizeX, scaledAreaRTSizeY, client.mpHAL_AreaRT, client.mpHAL_AreaTexture))
 					{
-						client.mAreaRTSizeX		= client.mAreaSizeX;
-						client.mAreaRTSizeY		= client.mAreaSizeY;
+						client.mAreaRTSizeX		= scaledAreaRTSizeX;
+						client.mAreaRTSizeY		= scaledAreaRTSizeY;
 						client.mLastUpdateTime	= std::chrono::steady_clock::now() - std::chrono::hours(1); // Will redraw the client
 						client.mBGNeedUpdate	= true;
 					}
@@ -264,7 +271,7 @@ void CompleteHALTextureDestroy()
 bool UpdateFont()
 {
 	static float sGeneratedDPI	= 0.f;
-	float currentDPIScale		= NetImguiServer::UI::GetFontDPIScale();
+	float currentDPIScale		= NetImguiServer::UI::Internal_GetFontDPIScale();
 	if( sGeneratedDPI != currentDPIScale )
 	{
 		ImFontConfig fontConfig;

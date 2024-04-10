@@ -171,6 +171,10 @@ NETIMGUI_API	void				Shutdown();
 NETIMGUI_API	bool				ConnectToApp(const char* clientName, const char* serverHost, uint32_t serverPort=kDefaultServerPort, ThreadFunctPtr threadFunction=0, FontCreateFuncPtr FontCreateFunction=0);
 NETIMGUI_API	bool				ConnectFromApp(const char* clientName, uint32_t clientPort=kDefaultClientPort, ThreadFunctPtr threadFunction=0, FontCreateFuncPtr fontCreateFunction=0);
 
+// If SetUseServerDPISettings() was called on the server side, you can query the font size loading ratio
+// (which is the ratio by which clients should multiply their font size at loading time)
+NETIMGUI_API    float 			 	GetFontSizeLoadingRatio();
+
 //=================================================================================================
 // Request a disconnect from the NetImguiServer application
 //=================================================================================================

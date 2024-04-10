@@ -46,6 +46,7 @@ struct alignas(8) CmdVersion
 		CustomTexture		= 12,	// Added a 'custom' texture format to let user potentially handle their how format
 		DPIScale			= 13,	// Server now handle monitor DPI
 		Clipboard			= 14,	// Added clipboard support between server/client
+		FontLoadingRatio	= 15,	// Added a font loading scale to be applied upon font loading
 		// Insert new version here
 
 		//--------------------------------
@@ -194,6 +195,7 @@ struct alignas(8) CmdInput
 	bool							mCompressionUse					= false;	// Server would like client to compress the communication data
 	bool							mCompressionSkip				= false;	// Server forcing next client's frame data to be uncompressed
 	float							mFontDPIScaling					= 1.f;		// Font scaling request by Server accounting for monitor DPI
+	float 							mFontSizeLoadingRatio			= 1.f;		// Ratio to be applied upon font loading (set if SetUseServerDPISettings was called)
 	uint64_t						mMouseDownMask					= 0;
 	uint64_t						mInputDownMask[(ImGuiKey_COUNT+63)/64]={};
 	float							mInputAnalog[kAnalog_Count]		= {};
