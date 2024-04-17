@@ -175,6 +175,8 @@ NETIMGUI_API	bool				ConnectFromApp(const char* clientName, uint32_t clientPort=
 // (which is the ratio by which clients should multiply their font size at loading time)
 NETIMGUI_API    float 			 	GetFontSizeLoadingRatio();
 
+NETIMGUI_API	void 				SetWindowSize_96PPI(uint16_t width, uint16_t height);
+
 //=================================================================================================
 // Request a disconnect from the NetImguiServer application
 //=================================================================================================

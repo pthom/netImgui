@@ -62,7 +62,12 @@ void Client::ReceiveDrawFrame(NetImgui::Internal::CmdDrawFrame* pFrameData)
 		mpFrameDrawPrev						= pFrameData;
 		NetImguiImDrawData*	pNewDrawData	= ConvertToImguiDrawData(pFrameData);
 		mPendingImguiDrawDataIn.Assign(pNewDrawData);
-		
+
+		if ((pFrameData->mWindowHeight > 0) && (pFrameData->mWindowWidth > 0))
+		{
+			mPendingWindowSize = (pFrameData->mWindowHeight << 16) | pFrameData->mWindowWidth;
+		}
+
 		// Update framerate
 		constexpr float kHysteresis	= 0.05f; // Between 0 to 1.0
 		auto elapsedTime			= std::chrono::steady_clock::now() - mLastDrawFrame;

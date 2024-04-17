@@ -77,7 +77,9 @@ struct ClientInfo
 	std::atomic<Network::SocketInfo*>	mpSocketListen;							// Socket used to wait for communication request from server
 	VecTexture							mTextures;								// List if textures created by this client (used un main thread)
 	char								mName[64]					= {};
-	uint64_t							mFrameIndex					= 0;		// Incremented everytime we send a DrawFrame Command	
+	uint64_t							mFrameIndex					= 0;		// Incremented everytime we send a DrawFrame Command
+	uint16_t 							mWindowWidth		= 0; 				// If non-zero, set the window size to this value on the next frame
+	uint16_t 							mWindowHeight		= 0; 				// (in virtual pixels at 96 DPI)
 	CmdTexture*							mTexturesPending[16];
 	ExchangePtr<CmdDrawFrame>			mPendingFrameOut;
 	ExchangePtr<CmdBackground>			mPendingBackgroundOut;

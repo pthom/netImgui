@@ -187,6 +187,14 @@ bool Communications_Outgoing_Frame(ClientInfo& client)
 	if( pPendingDraw )
 	{
 		pPendingDraw->mFrameIndex	= client.mFrameIndex++;
+
+		if ((client.mWindowWidth > 0) && (client.mWindowHeight > 0))
+		{
+			pPendingDraw->mWindowWidth	= client.mWindowWidth;
+			pPendingDraw->mWindowHeight	= client.mWindowHeight;
+			client.mWindowWidth			= client.mWindowHeight = 0;
+		}
+
 		//---------------------------------------------------------------------
 		// Apply delta compression to DrawCommand, when requested
 		if( pPendingDraw->mCompressed )

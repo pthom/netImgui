@@ -82,6 +82,7 @@ struct Client
 	NetImgui::Internal::CmdTexture*			mpPendingTextures[64]	= {};		//!< Textures commands waiting to be processed in main update loop
 	std::atomic_uint64_t					mPendingTextureReadIndex;
 	std::atomic_uint64_t					mPendingTextureWriteIndex;
+	std::atomic_uint32_t					mPendingWindowSize = 0;
 	bool									mbIsVisible				= false;	//!< If currently shown
 	bool									mbIsActive				= false;	//!< Is the current active window (will receive input, only one is true at a time)
 	bool									mbIsReleased			= false;	//!< If released in com thread and main thread should delete resources

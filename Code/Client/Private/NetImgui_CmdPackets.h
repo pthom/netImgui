@@ -47,6 +47,7 @@ struct alignas(8) CmdVersion
 		DPIScale			= 13,	// Server now handle monitor DPI
 		Clipboard			= 14,	// Added clipboard support between server/client
 		FontLoadingRatio	= 15,	// Added a font loading scale to be applied upon font loading
+		WindowSize			= 16,	// Added a command to set the window size (from client to server)
 		// Insert new version here
 
 		//--------------------------------
@@ -228,6 +229,8 @@ struct alignas(8) CmdDrawFrame
 	uint8_t							mCompressed			= false;
 	uint8_t							PADDING[3]			= {};
 	OffsetPointer<ImguiDrawGroup>	mpDrawGroups;
+	uint16_t 						mWindowWidth		= 0; // If non-zero, change the window size to this value on the next frame
+	uint16_t 						mWindowHeight		= 0; // (in virtual pixels at 96 DPI)
 	inline void						ToPointers();
 	inline void						ToOffsets();
 };

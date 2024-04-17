@@ -36,6 +36,9 @@ static bool								gPopup_ServerConfig_Show			= false;
 static NetImguiServer::Config::Client*	gPopup_ClientConfig_pConfig			= nullptr;
 float 									gFontLoadingRatio = -1.f; // will be > 0 when UseServerDPISettings() was called instead of SetWindowDPI()
 
+
+static std::function<void(uint16_t, uint16_t)> gCallbackWindowSize96PPI = nullptr;
+
 //=================================================================================================
 // Convert a memory size to a displayable value
 //=================================================================================================
@@ -521,6 +524,19 @@ void DrawImguiContent_Clients()
 		RemoteClient::Client& client = RemoteClient::Client::Get(i);
 		if( client.mbIsConnected )
 		{
+			// Handle optional resize window command
+			if (client.mPendingWindowSize > 0)
+			{
+				// Todo: make this test and these two lines atomic
+				int32_t windowSize = client.mPendingWindowSize;
+				client.mPendingWindowSize = 0;
+
+				int16_t windowWidth = (int16_t)(windowSize & 0x0000FFFF);
+				int16_t windowHeight = (int16_t)(windowSize >> 16);
+				if (gCallbackWindowSize96PPI)
+					gCallbackWindowSize96PPI(windowWidth, windowHeight);
+			}
+
 			ImGui::PushID(i);
 			ImGui::SetNextWindowBgAlpha(1.0);
 			ImGui::SetNextWindowDockID(gMainDockID, ImGuiCond_Once);
@@ -1003,6 +1019,20 @@ ImVec2 Internal_GetDisplayFramebufferScale()
     {
         return ImVec2(1.f, 1.f);
     }
+}
+
+
+void SetCallbackWindowSize96PPI(std::function<void(uint16_t, uint16_t)> callbackWindowSize96PPI)
+{
+	gCallbackWindowSize96PPI = callbackWindowSize96PPI;
+}
+
+void Internal_OnWindowSize96PPI(uint16_t width, uint16_t height)
+{
+	if (gCallbackWindowSize96PPI)
+	{
+		gCallbackWindowSize96PPI(width, height);
+	}
 }
 
 

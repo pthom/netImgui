@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 
 namespace NetImguiServer { namespace App { struct ServerTexture; } } // Forward Declare
 
@@ -29,12 +30,16 @@ namespace NetImguiServer { namespace UI
 	// Warning, in this second case, clients need to actively call GetFontSizeLoadingRatio() to get this value
 	void						SetUseServerDPISettings(float fontSizeLoadingRatio);
 
+	// Provide a callback that will be called if the client want to change the window size
+	// It is up to the server to check if that size fits on the screen, and to
+	// adjust that size so that it correspond to a size on a 96PPI screen.
+	// (the server may decide to apply a smaller size if needed)
+	void 						SetCallbackWindowSize96PPI(std::function<void(uint16_t, uint16_t)> callbackWindowSize96PPI);
+
     // Internal API
 	// ------------------------------------------------
-    float						GetFontDPIScale(); // Returns a DPI Scale calculated from the window DPI, or ImGui::GetIO().FontGlobalScale if SetUseServerDPISettings() was called
-	ImVec2						GetDisplayFramebufferScale(); // Returns (1,1) or ImGui::GetIO().DisplayFramebufferScale if SetUseServerDPISettings() was called
-	float 						GetFontSizeLoadingRatio(); // Returns 1 or the value set by SetUseServerDPISettings()
     float						Internal_GetFontDPIScale(); // Returns a DPI Scale calculated from the window DPI, or ImGui::GetIO().FontGlobalScale if SetUseServerDPISettings() was called
 	ImVec2						Internal_GetDisplayFramebufferScale(); // Returns (1,1) or ImGui::GetIO().DisplayFramebufferScale if SetUseServerDPISettings() was called
 	float 						Internal_GetFontSizeLoadingRatio(); // Returns 1 or the value set by SetUseServerDPISettings()
+	void						Internal_OnWindowSize96PPI(uint16_t width, uint16_t height);
 }} //namespace NetImguiServer { namespace UI

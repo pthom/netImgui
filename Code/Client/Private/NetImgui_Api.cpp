@@ -544,6 +544,15 @@ float GetFontSizeLoadingRatio()
 	return gFontSizeLoadingRatio;
 }
 
+void SetWindowSize_96PPI(uint16_t width, uint16_t height)
+{
+	if (!gpClientInfo) return;
+
+	Client::ClientInfo& client = *gpClientInfo;
+	client.mWindowHeight = height;
+	client.mWindowWidth = width;
+}
+
 
 //=================================================================================================
 bool ProcessInputData(Client::ClientInfo& client)
